@@ -1,0 +1,61 @@
+﻿@using ETicaretAPI.Client.Models.Communication
+@model CommunicationForUserDto
+
+<h5>UserCommunication</h5>
+
+<br />
+<br />
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="~/css/usercommunication.css" asp-append-version="true" />
+</head>
+<body>
+    @if (Model == null)
+    {
+        <p>Communication yok</p>
+        <form method="post" asp-controller="Communication" asp-action="CommunicationCreate" class="add-button-form">
+            <button type="submit" formmethod="post">Add Communication</button>
+        </form>
+    }
+    else
+    {
+        <div class="box">
+            <p>Created Date: <span id="createdDate">@Model.CreatedDate</span> a timeless speech</p>
+            <p>IsSuccess: <span id="isSuccess">@Model.IsSuccess</span></p>
+        </div>
+
+        if (Model is not null)
+        {
+            <a href="@Url.Action("ChatArea", "Chat", new { cCustomerPersonId = Model.Id })">Start Speak</a>
+
+            <form method="post" asp-controller="Communication" asp-action="CommunicationEnd">
+                <button type="submit" formmethod="post">Remove Communication</button>
+            </form>
+        }
+        <button disabled class="add-button">Add Communication</button>
+    }
+    <script src="~/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script>
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:7107/communicationHub")
+            .build();
+
+        connection.on("communicationCustomerPersonForUser", function (updatedData) {
+            document.getElementById("createdDate").innerText = updatedData.CreatedDate;
+            document.getElementById("isSuccess").innerText = updatedData.IsSuccess;
+        });
+
+        connection.start()
+            .then(function () {
+                document.getElementById("connectionStatus").innerText = "communicationCustomerPersonForUser connection succesfully"; // Log mesajını güncelle
+            })
+            .catch(function (err) {
+                document.getElementById("connectionStatus").innerText = "connection error: " + err.toString(); // Hata mesajını güncelle
+            });
+    </script>
+    <p id="connectionStatus"></p>
+</body>
+</html>

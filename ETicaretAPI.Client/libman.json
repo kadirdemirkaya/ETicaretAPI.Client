@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "defaultProvider": "unpkg",
+  "libraries": [
+    {
+      "library": "@microsoft/signalr@6.0.10",
+      "destination": "wwwroot/microsoft/signalr/"
+    },
+    {
+      "library": "chart.js@4.3.0",
+      "destination": "wwwroot/chart.js/"
+    },
+    {
+      "library": "highcharts@11.1.0",
+      "destination": "wwwroot/highcharts/"
+    }
+  ]
+}

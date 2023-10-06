@@ -1,0 +1,61 @@
+﻿@using ETicaretAPI.Client.Models.Communication.CommunicationInfoForCommunicationPerson
+@model CommunicationInfoForCommunicationPersonQueryResponse
+
+<h5>PersonCommunication</h5>
+
+<br />
+<br />
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="~/css/usercommunication.css" asp-append-version="true" />
+</head>
+<body>
+    @if (Model == null || Model.CommunicationForPersonDtos == null || Model.CommunicationForPersonDtos.Count == 0)
+    {
+        <p>Communication yok</p>
+    }
+    else
+    {
+        @foreach (var communication in Model.CommunicationForPersonDtos)
+        {
+            <div class="box">
+                <p>Created Date: <span class="createdDate">@communication.CreatedDate</span> a timeless speech</p>
+                <p>IsSuccess: <span class="isSuccess">@communication.IsSuccess</span></p>
+            </div>
+            <a href="@Url.Action("ChatArea", "Chat", new { cCustomerPersonId = ViewBag.CommunicationCustomerPersonId })">Start Speak</a>
+            <form method="post" asp-controller="Communication" asp-action="CommunicationEnd">
+                <button type="submit" formmethod="post">Remove Communication</button>
+            </form>
+        }
+    }
+    <script src="~/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script>
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:7107/communicationHub")
+            .build();
+
+        connection.on("communicationCustomerPersonForPerson", function (updatedData) {
+            var createdDateElements = document.getElementsByClassName("createdDate");
+            var isSuccessElements = document.getElementsByClassName("isSuccess");
+
+            for (var i = 0; i < createdDateElements.length; i++) {
+                createdDateElements[i].innerText = updatedData.CommunicationForPersonDtos[i].CreatedDate;
+                isSuccessElements[i].innerText = updatedData.CommunicationForPersonDtos[i].IsSuccess;
+            }
+        });
+
+        connection.start()
+            .then(function () {
+                document.getElementById("connectionStatus").innerText = "communicationCustomerPersonForPerson connection succesfully"; // Log mesajını güncelle
+            })
+            .catch(function (err) {
+                document.getElementById("connectionStatus").innerText = "connection error: " + err.toString(); // Hata mesajını güncelle
+            });
+
+    </script>
+    <p id="connectionStatus"></p>
+</body>
+</html>

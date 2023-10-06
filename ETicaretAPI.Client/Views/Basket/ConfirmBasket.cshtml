@@ -1,0 +1,23 @@
+﻿@using ETicaretAPI.Client.Models.Basket.ConfirmBasket;
+@model ConfirmBasketCommandRequest
+
+<h2>Confirm Basket</h2>
+
+<form asp-action="ConfirmBasket" asp-controller="Basket" method="post">
+    <div class="form-group">
+        <label for="address">Adres:</label>
+        <input type="text" id="address" asp-for="@Model.AddAddressDto.Apartment" class="form-control" placeholder="Apartman" />
+        <input type="text" id="address" asp-for="@Model.AddAddressDto.City" class="form-control" placeholder="Şehir" />
+        <input type="text" id="address" asp-for="@Model.AddAddressDto.Description" class="form-control" placeholder="Açıklama" />
+        <input type="text" id="address" asp-for="@Model.AddAddressDto.District" class="form-control" placeholder="İlçe" />
+        <input type="text" id="address" asp-for="@Model.AddAddressDto.Neighborhood" class="form-control" placeholder="Mahalle" />
+        <input type="text" id="address" asp-for="@Model.AddAddressDto.Street" class="form-control" placeholder="Sokak" />
+
+        <br />
+
+        <label for="orderDescription">Sipariş</label>
+        <input type="text" id="orderDescription" asp-for="@Model.AddOrderDto.Description" class="form-control" placeholder="Açıklama" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Confirm Basket</button>
+</form>

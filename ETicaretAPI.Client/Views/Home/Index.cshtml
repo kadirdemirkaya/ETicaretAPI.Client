@@ -1,0 +1,81 @@
+﻿@model List<ETicaretAPI.Client.Models.Category.ProductTotalOfCategories.CategoryProductDto>
+
+<h1>Grafik</h1>
+<canvas id="chartCanvas" style="max-width: 400px; max-height: 400px;"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="~/microsoft/signalr/dist/browser/signalr.js"></script>
+<script src="~/microsoft/signalr/dist/browser/signalr.min.js"></script>
+
+<script>
+    var ctx = document.getElementById('chartCanvas').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: [],
+            datasets: [{
+                data: [],
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FFCE55']
+            }]
+        },
+        options: {
+            responsive: true,
+            legend: {
+                position: 'bottom'
+            },
+            title: {
+                display: true,
+                text: 'Çember Grafik'
+            }
+        }
+    });
+
+    var connection = new signalR.HubConnectionBuilder()
+        .withUrl('https://localhost:7107/productHub')
+        .build();
+
+    connection.start()
+        .then(function () {
+            //console.log('SignalR connection established.');
+        })
+        .catch(function (err) {
+            //console.error(err.toString());
+        });
+
+    connection.on('receiveProduct', function (categories) {
+        var chartData = {
+            labels: [],
+            datasets: [{
+                data: [],
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FFCE55']
+            }]
+        };
+
+        categories.forEach(function (category) {
+            chartData.labels.push(category.categoryName);
+            chartData.datasets[0].data.push(category.totalProduct);
+        });
+
+        myChart.data.labels = chartData.labels;
+        myChart.data.datasets[0].data = chartData.datasets[0].data;
+        myChart.update();
+    });
+
+    var initialCategories = @Html.Raw(Json.Serialize(Model));
+    var initialChartData = {
+        labels: [],
+        datasets: [{
+            data: [],
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FFCE55']
+        }]
+    };
+
+    initialCategories.forEach(function (category) {
+        initialChartData.labels.push(category.categoryName);
+        initialChartData.datasets[0].data.push(category.totalProduct);
+    });
+
+    myChart.data.labels = initialChartData.labels;
+    myChart.data.datasets[0].data = initialChartData.datasets[0].data;
+    myChart.update();
+</script>

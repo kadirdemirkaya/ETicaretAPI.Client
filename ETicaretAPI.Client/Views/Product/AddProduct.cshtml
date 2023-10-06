@@ -1,0 +1,81 @@
+﻿@using ETicaretAPI.Client.Models.Product.ProducAddPhoto;
+@model AddProductWithPhotoDto
+
+<h1>Add Product</h1>
+
+<form asp-action="AddProduct" asp-controller="Product" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Name">Name:</label>
+        <input asp-for="Name" class="form-control" required>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Stock">Stock:</label>
+        <input asp-for="Stock" type="number" class="form-control" required>
+        <span asp-validation-for="Stock" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Price">Price:</label>
+        <input asp-for="Price" type="number" step="0.01" class="form-control" required>
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="files">Image:</label>
+        <input asp-for="files" type="file" multiple class="form-control-file" accept="image/*">
+        <span asp-validation-for="files" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CategoryId">Category:</label>
+        <select asp-for="CategoryId" asp-items="@((IEnumerable<SelectListItem>)ViewData["Categories"])" class="form-control">
+            <option value="">Select Category</option>
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>
+
+<script src="~/microsoft/signalr/dist/browser/signalr.min.js"></script>
+<script src="~/microsoft/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/site.js"></script>
+
+<script>
+
+    var connection = new signalR.HubConnectionBuilder()
+        .withUrl('https://localhost:7107/productsInfoHub')
+        .withAutomaticReconnect()
+        .build();
+
+    function checkConnectionStatus() {
+        if (connection.state === signalR.HubConnectionState.Connected) {
+            //console.log('connected to productsInfoHub');
+            callHubMethod();
+        } else {
+            //console.log('not connected');
+            connection.start().then(function () {
+                //console.log('reconnected to productsInfoHub');
+                callHubMethod();
+            }).catch(function (err) {
+                console.error(err.toString());
+            });
+        }
+    }
+
+    var receivedMessages = [];
+    connection.on('receiveProductAddedMessage', function (message) {
+        //console.log('Received message:', message);
+        receivedMessages.push(message);
+        alert(message)
+    });
+
+    connection.start().then(function () {
+        //console.log('connected to productsInfoHub');
+        callHubMethod();
+    }).catch(function (err) {
+        console.error(err.toString());
+    });
+
+    setInterval(checkConnectionStatus, 5000);
+</script>

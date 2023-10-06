@@ -1,0 +1,35 @@
+﻿<h2>Index</h2>
+
+<form id="pageForm">
+    <label for="pageSelect">Sayfa Seçin:</label>
+    <select id="pageSelect">
+        <option value="active">Aktif Siparişler</option>
+        <option value="inactive">Aktif Olmayan Siparişler</option>
+    </select>
+</form>
+
+<div id="pageContent">
+    
+</div>
+
+<script>
+    document.getElementById("pageSelect").addEventListener("change", function () {
+        var selectedOption = this.value;
+        var url = "";
+
+        if (selectedOption === "active") {
+            url = "/Order/GetActiveOrders";
+        } else if (selectedOption === "inactive") {
+            url = "/Order/GetNotActiveOrders";
+        }
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+                document.getElementById("pageContent").innerHTML = this.responseText;
+            }
+        };
+        xhttp.open("GET", url, true);
+        xhttp.send();
+    });
+</script>

@@ -1,0 +1,32 @@
+﻿@using ETicaretAPI.Client.Models.Order;
+@model List<Order>
+@{
+    Layout = null;
+}
+<h2>GetNotActiveOrders</h2>
+
+<div class="order-container">
+    @foreach (var order in Model)
+    {
+        <div class="order-box">
+            <strong>Açıklama:</strong> @order.Description <br />
+            <strong>Oluşturulma Tarihi:</strong> @order.CreatedDate <br />
+        </div>
+    }
+</div>
+
+<style>
+    .order-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .order-box {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px;
+        width: 200px;
+    }
+</style>

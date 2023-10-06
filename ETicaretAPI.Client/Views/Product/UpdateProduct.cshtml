@@ -1,0 +1,110 @@
+﻿@using ETicaretAPI.Client.Models.Product.GetByGuidProduct
+@model GetProductByGuidDto
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Product</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 200px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        button[type="submit"] {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .image-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .delete-icon {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            background-color: #f44336;
+            color: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ürün Güncelle</h1>
+    <form id="updateForm" asp-controller="Product" asp-action="UpdateProduct" method="post">
+        <input type="hidden" name="Id" value="@Model.Id" />
+
+        <label for="productName">Ürün Adı:</label>
+        <input type="text" id="productName" name="Name" value="@Model.Name" required />
+
+        <label for="stock">Stok:</label>
+        <input type="number" id="stock" name="Stock" value="@Model.Stock" required />
+
+        <label for="price">Fiyat:</label>
+        <input type="number" id="price" name="Price" step="0.01" value="@Model.Price.ToString("0.00")" required />
+
+        <div class="image-container">
+            @if (Model.Paths != null)
+            {
+                foreach (var path in Model.Paths)
+                {
+                    <div class="image-wrapper">
+                        <img src="@path" alt="Resim" style="width: 500px; height: 300px;" />
+                        <span class="delete-icon" onclick="deleteImage('@path')">&times;</span>
+                    </div>
+                }
+            }
+        </div>
+
+        <button type="submit">Update</button>
+    </form>
+
+    <script>
+        function deleteImage(path) {
+            var form = document.createElement("form");
+            form.setAttribute("method", "post");
+            form.setAttribute("action", "/DeleteProductImageByGuid");
+
+            var inputPath = document.createElement("input");
+            inputPath.setAttribute("type", "hidden");
+            inputPath.setAttribute("name", "path");
+            inputPath.setAttribute("value", path);
+            form.appendChild(inputPath);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+﻿@using ETicaretAPI.Client.Models.Chat;
+@model MessageDto
+
+<h5>Chat Area</h5>
+
+<br />
+<br />
+
+<form method="post" asp-controller="Chat" asp-action="ChatArea">
+    <input type="hidden" name="CommunicationCustomerPersonId" asp-for="CommunicationCustomerPersonId" />
+    <div id="messageContainer"></div>
+    <div class="form-group">
+        <input type="text" class="form-control" id="messageInput" name="message" placeholder="Mesajınızı yazın" asp-for="message" />
+    </div>
+    <button type="submit" id="btn12" class="btn btn-primary">Send</button>
+</form>
+
+<script src="~/microsoft/signalr/dist/browser/signalr.min.js"></script>
+<script src="~/microsoft/signalr/dist/browser/signalr.js"></script>
+<script>
+    var connection = new signalR.HubConnectionBuilder()
+        .withUrl("https://localhost:7107/chatHub", {
+            skipNegotiation: true,
+            transport: signalR.HttpTransportType.WebSockets
+        })
+        .configureLogging(signalR.LogLevel.Debug)
+        .build();
+
+
+    connection.on("receiveChatMessage", function (communicationMessages) {
+
+        var messageContainer = document.getElementById("messageContainer");
+        messageContainer.innerHTML = "";
+
+        for (var i = 0; i < communicationMessages.length; i++) {
+            var communicationMessage = communicationMessages[i];
+
+            var messageDiv = document.createElement("div");
+            var messageText = document.createTextNode(communicationMessage.message);
+
+            if (communicationMessage.personMessage) {
+                messageDiv.classList.add("message-left");
+            } else {
+                messageDiv.classList.add("message-right");
+            }
+
+            messageDiv.appendChild(messageText);
+            messageContainer.appendChild(messageDiv);
+        }
+    });
+
+    connection.start()
+        .then(function () {
+            console.log("receiveChatMessage connection succesfully");
+            document.getElementById("connectionStatus").innerText = "receiveChatMessage connection succesfully";
+        })
+        .catch(function (err) {
+            console.error(err.toString());
+            document.getElementById("connectionStatus").innerText = "connection error: " + err.toString();
+        });
+
+</script>
+<p id="connectionStatus"></p>

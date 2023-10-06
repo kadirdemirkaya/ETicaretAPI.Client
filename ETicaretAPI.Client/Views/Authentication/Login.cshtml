@@ -1,0 +1,49 @@
+﻿@using ETicaretAPI.Client.Models.Authentication.Login
+@model LoginDto
+
+<h1>Login</h1>
+
+<form asp-action="Login" asp-controller="Authentication" method="post">
+    <div class="form-group">
+        <label asp-for="Email">Email:</label>
+        <input asp-for="Email" class="form-control" required>
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Password">Password:</label>
+        <input asp-for="Password" class="form-control" required>
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+
+<script src="~/microsoft/signalr/dist/browser/signalr.min.js"></script>
+<script src="~/microsoft/signalr/dist/browser/signalr.js"></script>
+
+<script>
+    var connection = new signalR.HubConnectionBuilder()
+        .withUrl('https://localhost:7107/loginHub')
+        .withAutomaticReconnect()
+        .build();
+
+    function checkConnectionStatus() {
+        if (connection.state === signalR.HubConnectionState.Connected) {
+        } else {
+            connection.start().then(function () {
+            }).catch(function (err) {
+                console.error(err.toString());
+            });
+        }
+    }
+
+    var receivedMessages = [];
+    connection.on('loginAuthenticationMessahe', function (message) {
+        receivedMessages.push(message);
+        alert(message)
+    });
+
+    connection.start().then(function () {
+    }).catch(function (err) {
+        console.error(err.toString());
+    });
+</script>

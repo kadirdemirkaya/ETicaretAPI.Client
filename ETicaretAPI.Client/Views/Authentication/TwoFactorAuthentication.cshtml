@@ -1,0 +1,12 @@
+﻿@using ETicaretAPI.Client.Models.Authentication.Login;
+@model TwoFactorAuthenticationViewModel
+
+<form method="post" asp-action="TwoFactorAuthentication" asp-controller="Authentication">
+    <div class="form-group">
+        <label for="code">Doğrulama Kodu:</label>
+        <input type="text" id="code" name="code" class="form-control" required>
+    </div>
+    <input type="hidden" id="email" name="email" value="@Model.Email" />
+
+    <button type="submit" class="btn btn-primary">Gönder</button>
+</form>

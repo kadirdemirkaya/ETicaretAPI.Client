@@ -1,0 +1,80 @@
+﻿@model List<ETicaretAPI.Client.Models.Product.Product>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Basket</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <h1>Basket</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Product Code</th>
+                <th>Created Date</th>
+                <th>Is Success</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var product in Model)
+                {
+                    <tr>
+                        <td>@product.Name</td>
+                        <td>
+                            <form asp-action="AddBasket" asp-controller="Basket" method="post">
+                                <input type="hidden" name="productId" value="@product.Id" />
+                                <input type="number" name="quantity" min="1" max="100" value="@product.Quantity" /> <!-- Adjust min and max values according to your requirements -->
+                                <input type="submit" value="Save" />
+                            </form>
+                        </td>
+                        <td>@product.Price</td>
+                        <td>@product.ProductCode</td>
+                        <td>@product.CreatedDate</td>
+                        <td>@product.IsSuccess</td>
+                        <td>
+                            <form asp-action="DeleteBasket" asp-controller="Basket" method="post">
+                                <input type="hidden" name="productId" value="@product.Id" />
+                                <input type="submit" value="Delete" />
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+        <td>
+            <form asp-action="ConfirmBasket" asp-controller="Basket" method="get">
+                <input type="submit" value="Confirm Basket" />
+            </form>
+        </td>
+        </tbody>
+    </table>
+</body>
+</html>
